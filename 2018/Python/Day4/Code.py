@@ -30,10 +30,10 @@ class day4(object):
         try:
             self.sleep_table[time_stamp.strftime('%m-%d')]\
                 .changes.append(int(time_stamp.strftime('%M')))
-            print("Fails")
         except:
             self.sleep_table[time_stamp.strftime("%m-%d")] = \
                 Record.with_change(int(time_stamp.strftime('%M')))
 
     def problem1(self, records):
-        pass
+        for time_stamp, text from self.read_records(records):
+            if "Guard" in text
