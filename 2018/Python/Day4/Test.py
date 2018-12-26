@@ -9,25 +9,20 @@ class TestDay1(unittest.TestCase):
 
     def test_read_record(self):
 
-        problem = "[1518-11-01 00:00] Guard #10 begins shift"
         time_stamp = datetime.strptime("1518-11-01 00:00", '%Y-%m-%d %H:%M')
+
+        problem = "[1518-11-01 00:00] Guard #10 begins shift"
         expected_result = (time_stamp, "Guard #10 begins shift")
 
-        self.assertEqual(self.sut.read_record(problem), expected_result)
-
-    def test_read_time_stamp(self):
-
-        problem = "[1518-11-01 00:00] Guard #10 begins shift"
-        expected_result = datetime.strptime("1518-11-01 00:00", '%Y-%m-%d %H:%M')
-
-        self.assertEqual(self.sut.read_record(problem)[0], expected_result)
+        self.assertEqual(next(self.sut.read_records(problem)), expected_result)
 
     def test_single_record(self):
 
         problem = "[1518-11-03 00:24] falls asleep"
         expected_result = [24]
 
-        self.sut.add_record(problem)
+        record = next(self.sut.read_records(problem))
+        self.sut.add_state_change(record[0])
         self.assertEqual(self.sut.sleep_table["11-03"].changes, expected_result)
 
     def test_records_of_a_day(self):
