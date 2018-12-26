@@ -26,6 +26,9 @@ class day4(object):
     def read_time_stamp(self, time_stamp):
         return datetime.strptime(time_stamp, '%Y-%m-%d %H:%M')
 
+    def read_guard_id(self, text):
+        return int(re.match(r'Guard #(.*) begins shift', text).group(1))
+
     def add_state_change(self, time_stamp):
         try:
             self.sleep_table[time_stamp.strftime('%m-%d')]\
@@ -34,6 +37,14 @@ class day4(object):
             self.sleep_table[time_stamp.strftime("%m-%d")] = \
                 Record.with_change(int(time_stamp.strftime('%M')))
 
+    def add_guard_id(self, record):
+        time_stamp, guard_id = record[0], self.read_guard_id(record[1])
+        try:
+            self.sleep_table[time_stamp.strftime('%m-%d')]\
+                .guard_id = guard_id
+        except:
+            self.sleep_table[time_stamp.strftime('%m-%d')] = \
+                Record.with_id(guard_id)
+
     def problem1(self, records):
-        for time_stamp, text from self.read_records(records):
-            if "Guard" in text
+        pass
