@@ -30,17 +30,19 @@ class TestDay1(unittest.TestCase):
         problem = "[1518-11-01 00:00] Guard #10 begins shift"
         expected_result = 10
 
-        record = next(self.sut.read_records(problem))
-        self.sut.add_guard_id(record)
+        time_stamp, text = next(self.sut.read_records(problem))
+        self.sut.add_guard_id(time_stamp, self.sut.read_guard_id(text))
         self.assertEqual(self.sut.sleep_table["11-01"].guard_id, expected_result)
 
     def test_records_of_a_day(self):
 
         problem = "[1518-11-01 00:00] Guard #10 begins shift, [1518-11-01 00:05] falls asleep, [1518-11-01 00:25] wakes up, [1518-11-01 00:30] falls asleep, [1518-11-01 00:55] wakes up"
-        expected_result = {("11-03"): [24]}
+        expected_result_keys = ["11-01"]
+        expected_result_changes = [5, 25, 30, 55]
 
-        self.sut.problem1(problem)
-        self.assertEqual(self.sut.sleep_table, expected_result)
+        self.sut.fill_sleep_table(problem)
+        self.assertEqual([*self.sut.sleep_table], expected_result_keys)
+        self.assertEqual(self.sut.sleep_table["11-01"].changes, expected_result_changes)
 
 
 if __name__ == '__main__':

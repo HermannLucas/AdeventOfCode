@@ -37,8 +37,7 @@ class day4(object):
             self.sleep_table[time_stamp.strftime("%m-%d")] = \
                 Record.with_change(int(time_stamp.strftime('%M')))
 
-    def add_guard_id(self, record):
-        time_stamp, guard_id = record[0], self.read_guard_id(record[1])
+    def add_guard_id(self, time_stamp, guard_id):
         try:
             self.sleep_table[time_stamp.strftime('%m-%d')]\
                 .guard_id = guard_id
@@ -46,5 +45,12 @@ class day4(object):
             self.sleep_table[time_stamp.strftime('%m-%d')] = \
                 Record.with_id(guard_id)
 
-    def problem1(self, records):
-        pass
+    def fill_sleep_table(self, records):
+        for time_stamp, text in self.read_records(records):
+            if "Guard" in text:
+                self.add_guard_id(time_stamp, self.read_guard_id(text))
+            else:
+                self.add_state_change(time_stamp)
+
+        for day in self.sleep_table.values():
+            day.changes.sort()
