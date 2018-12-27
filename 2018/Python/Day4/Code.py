@@ -69,3 +69,24 @@ class day4(object):
                 sleep_time[day.guard_id] = sum([sleep[1] - sleep[0] for sleep \
                     in (zip(day.changes[::2], day.changes[1::2]))])
         return max(sleep_time, key= sleep_time.get)
+    
+    def find_most_asleep(self, guard_id):
+          rec = {}
+          tot = 0
+          count = 1
+          state_changes = {}
+          for day in self.sleep_table.values():
+              if guard_id == day.guard_id:
+                  for change in day.changes:
+                    state_changes[change] = count
+                    count *= -1
+          for guard_id, change in sorted(state_changes.items()):
+              tot += change
+              rec[guard_id] = tot
+          return(max(rec, key = rec.get))
+    
+    def problem1(self, records):
+      self.fill_sleep_table(records)
+      guard_id = self.find_sleeper()
+      minute = self.find_most_asleep(guard_id)
+      return guard_id * minute
