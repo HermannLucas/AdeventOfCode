@@ -1,7 +1,7 @@
 import unittest
 import Code
 
-class TestDay1(unittest.TestCase):
+class TestDay5(unittest.TestCase):
 
     def test_reduce_units(self):
 
