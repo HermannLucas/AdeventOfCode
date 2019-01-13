@@ -29,7 +29,8 @@ class Instruction(object):
 
     def __init__(self, name, parent):
         self.name = name
-        self.time = 60 + ord(name) %64
+        # self.time = 60 + (ord(name) %64)
+        self.time = 60 + (ord(name) - ord('a'))
         self.parent = parent
 
     def work(self):
@@ -126,3 +127,10 @@ class day6(object):
                 if prerequisite not in self.done_list:
                     continue
             self.ready_queue.append(instruction)
+
+    # def add_action(self, slice, action)
+    # def alternate_prob1(self, instructions):
+    #     result = []
+    #     for predecessor, action in self.read_instructions(instructions):
+    #         if predecessor in result:
+    #             try:
