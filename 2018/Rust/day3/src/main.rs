@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::collections::HashSet;
 const PUZZLE: &str = include_str!("input.txt");
 
 #[derive(Hash, Eq, PartialEq)]
@@ -52,5 +53,29 @@ fn main() {
     }
     let result = fabric.cells.values().filter(|c| c.len() > 1).count();
     assert_eq!(108961, result);
-    println!("{}", result);
+    println!("Problem 1:{}", result);
+    
+    // Start of Problem 2
+    let mut id_list = HashSet::new();
+    for (_cell, ids) in fabric.cells.iter() {
+        for id in ids.iter() {
+            if !id_list.contains(id) {
+                if !is_overlap(&fabric, id) {
+                    assert_eq!(&681, id);
+                    println!("Problem 2:{}", id);
+                    return
+                }
+                id_list.insert(id);
+            }
+        }
+    }
+}
+
+fn is_overlap(canvas: &Canvas, id: &u16) -> bool {
+    for (_cell, ids) in canvas.cells.iter() {
+        if ids.contains(id) && ids.len() > 1 {
+            return true
+        }
+    }
+    return false
 }
