@@ -57,18 +57,19 @@ fn main() {
     
     // Start of Problem 2
     let mut id_list = HashSet::new();
-    for (_cell, ids) in fabric.cells.iter() {
+    for ids in fabric.cells.values() {
         for id in ids.iter() {
-            if !id_list.contains(id) {
-                if !is_overlap(&fabric, id) {
+            id_list.insert(
+                if id_list.contains(id) || is_overlap(&fabric, id) {
+                    id
+                } else {
                     assert_eq!(&681, id);
                     println!("Problem 2:{}", id);
                     return
                 }
-                id_list.insert(id);
-            }
+            );
         }
-    }
+     }
 }
 
 fn is_overlap(canvas: &Canvas, id: &u16) -> bool {
