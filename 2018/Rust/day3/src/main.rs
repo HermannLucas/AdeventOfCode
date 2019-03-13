@@ -59,13 +59,14 @@ fn main() {
     let mut id_list = HashSet::new();
     for (_cell, ids) in fabric.cells.iter() {
         for id in ids.iter() {
-            if !id_list.contains(id) {
-                if !is_overlap(&fabric, id) {
+            id_list.insert(0,
+                if id_list.contains(id) || is_overlap(&fabric, id) {
+                    id_list.insert(id);
+                } else {
                     assert_eq!(&681, id);
                     println!("Problem 2:{}", id);
                     return
                 }
-                id_list.insert(id);
             }
         }
     }
