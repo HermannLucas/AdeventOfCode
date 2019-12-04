@@ -4,11 +4,12 @@ use std::iter::FromIterator;
 
 const PUZZLE: &str = include_str!("../input.txt");
 
+#[derive(Debug)]
 enum Direction {
-    Up(usize),
-    Down(usize),
-    Left(usize),
-    Right(usize),
+    Up(isize),
+    Down(isize),
+    Left(isize),
+    Right(isize),
 }
 
 impl TryFrom<&str> for Direction {
@@ -25,6 +26,7 @@ impl TryFrom<&str> for Direction {
     }
 }
 
+#[derive(Debug)]
 struct Cable(Vec<Direction>);
 
 impl Cable {
@@ -67,18 +69,18 @@ impl IntoIterator for Cable {
     }
 }
 
-struct Grid(HashMap<(usize, usize), Vec<usize>>);
+struct Grid(HashMap<(isize, isize), Vec<usize>>);
 
 impl Grid {
     fn new() -> Self {
         Grid(HashMap::new())
     }
 
-    fn lay_cable(&mut self, pos: (usize, usize), cable_name: usize) {
+    fn lay_cable(&mut self, pos: (isize, isize), cable_name: usize) {
         self.0
             .entry(pos)
             .and_modify(|v| v.push(cable_name))
-            .or_insert(vec![cable_name]);
+            .or_insert_with(|| vec![cable_name]);
     }
 
     fn follow_cable(&mut self, cable: Cable, cable_name: usize) {
@@ -114,14 +116,38 @@ impl Grid {
             }
         }
     }
+
+    fn clean_cables(&mut self) {
+        self.0.iter_mut().for_each(|(_, v)| {
+            v.sort_unstable();
+            v.dedup()
+        });
+    }
 }
 
-fn part1(cable1: Vec<&str>, cable2: Vec<&str>) -> usize {
-    unimplemented!();
+fn part1(cable1: Cable, cable2: Cable) -> isize {
+    let mut grid = Grid::new();
+
+    grid.follow_cable(cable1, 1);
+    grid.follow_cable(cable2, 2);
+    grid.clean_cables();
+
+    grid.0
+        .into_iter()
+        .filter(|(_, v)| v.len() > 1)
+        .map(|(k, _)| k.0.abs() + k.1.abs())
+        .min()
+        .unwrap()
 }
 
 fn main() {
-    println!("Hello, world!");
+    let puzzle: Vec<_> = PUZZLE
+        .lines()
+        .map(|l| l.split(',').collect::<Vec<&str>>())
+        .collect();
+    let cable1 = Cable::try_from(puzzle[0].clone()).unwrap();
+    let cable2 = Cable::try_from(puzzle[1].clone()).unwrap();
+    println!("Part one: {:?}", part1(cable1, cable2));
 }
 
 #[cfg(test)]
@@ -130,8 +156,12 @@ mod tests {
 
     #[test]
     fn part1_test() {
-        let cable1 = vec!["R75", "D30", "R83", "U83", "L12", "D49", "R71", "U7", "L72"];
-        let cable2 = vec!["U62", "R66", "U55", "R34", "D71", "R55", "D58", "R83"];
+        let cable1 = Cable::try_from(vec![
+            "R75", "D30", "R83", "U83", "L12", "D49", "R71", "U7", "L72",
+        ])
+        .unwrap();
+        let cable2 =
+            Cable::try_from(vec!["U62", "R66", "U55", "R34", "D71", "R55", "D58", "R83"]).unwrap();
 
         assert_eq!(part1(cable1, cable2), 159);
     }
